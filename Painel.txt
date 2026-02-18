@@ -1,0 +1,213 @@
+<style>
+body{ background:#1f1f23; }
+
+.dwrap{
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 30px 24px 40px;
+  border-radius: 20px;
+  background: #2b2b31;
+  border: 1px solid rgba(255,255,255,0.06);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* LOGO + TITULO */
+.dbrand{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.dbrand img{
+  height:160px; 
+  margin-bottom:10px;
+}
+
+.dbrand-title{
+  font-size:24px;
+  font-weight:900;
+  color:#fff;
+  letter-spacing:1px;
+}
+
+.dbrand-title span{
+  color:#00ff01;
+}
+
+/* HEADER */
+.dhead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+
+.dtitle{
+  color:#fff;
+  font-size:20px;
+  font-weight:800;
+  margin:0;
+}
+
+.dsub{
+  color:#cfcfcf;
+  font-size:13px;
+  margin-top:6px;
+}
+
+.duser{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:6px;
+}
+
+.dbadge{
+  padding:6px 12px;
+  border-radius:999px;
+  background: rgba(0,255,1,0.15);
+  border:1px solid rgba(0,255,1,0.35);
+  color:#00ff01;
+  font-weight:800;
+  font-size:12px;
+}
+
+.dlogout{
+  border:none;
+  border-radius:12px;
+  padding:10px 14px;
+  background:#3a3a42;
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+  transition:.2s;
+}
+.dlogout:hover{
+  background:#44444d;
+}
+
+/* CARDS */
+.dgrid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:18px;
+}
+
+.dcard{
+  background:#222228;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:18px;
+  padding:22px;
+  transition:.2s;
+  text-decoration:none;
+  display:block;
+}
+
+.dcard:hover{
+  transform:translateY(-4px);
+  border-color:#00ff01;
+  box-shadow:0 0 20px rgba(0,255,1,0.15);
+}
+
+/* ÍCONES CLAROS */
+.dicon{
+  width:55px;
+  height:55px;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:14px;
+  background:#00ff01;
+  color:#000;
+  font-size:22px;
+  font-weight:900;
+}
+
+/* TEXTO DOS CARDS */
+.dcard h3{
+  margin:0 0 8px;
+  color:#fff;
+  font-size:17px;
+  font-weight:900;
+}
+
+.dcard p{
+  margin:0;
+  color:#cfcfcf;
+  font-size:13px;
+  line-height:1.4;
+}
+
+.dmsg{
+  margin-top:18px;
+  color:#fff;
+  font-weight:700;
+  font-size:13px;
+}
+
+@media (max-width: 860px){
+  .dgrid{ grid-template-columns: 1fr; }
+  .dhead{ flex-direction:column; align-items:flex-start; gap:12px; }
+  .duser{ align-items:flex-start; }
+}
+</style>
+
+<div class="dwrap">
+
+  <div class="dbrand">
+    <img src="https://clickecriamap.com.br/wp-content/uploads/2026/02/cropped-LOGO-CC.png" alt="Logo">
+    <div class="dbrand-title">
+      Click<span>&</span>Cria <span>Maps</span>
+    </div>
+  </div>
+
+  <div class="dhead">
+    <div>
+      <h1 class="dtitle">Painel Administrativo</h1>
+      <p class="dsub">Gerencie usuários, ranks e localizações.</p>
+    </div>
+
+    <div class="duser">
+      <span class="dbadge">Admin Logado</span>
+      <button class="dlogout" id="btnLogout">Sair</button>
+    </div>
+  </div>
+
+  <div class="dgrid">
+    <a class="dcard" href="/mapa">
+      <div class="dicon">🗺️</div>
+      <h3>Mapa de Usuários</h3>
+      <p>Visualize todos os cadastros no mapa com seus respectivos ranks.</p>
+    </a>
+
+    <a class="dcard" href="/cadastro-admin">
+      <div class="dicon">➕</div>
+      <h3>Cadastrar Usuário</h3>
+      <p>Crie novos cadastros com classificação personalizada.</p>
+    </a>
+
+    <a class="dcard" href="/lista">
+      <div class="dicon">📋</div>
+      <h3>Lista de Usuários</h3>
+      <p>Gerencie, edite e organize os usuários cadastrados.</p>
+    </a>
+  </div>
+
+  <div class="dmsg" id="panelMsg"></div>
+</div>
+
+<script>
+document.getElementById('btnLogout').addEventListener('click', async function(){
+  var fd = new FormData();
+  fd.append('action','ccm_logout');
+
+  var resp = await fetch('/wp-admin/admin-ajax.php', { method:'POST', body: fd });
+  var json = await resp.json();
+
+  if(resp.ok && json.success){
+    window.location.href="/login";
+  }
+});
+</script>

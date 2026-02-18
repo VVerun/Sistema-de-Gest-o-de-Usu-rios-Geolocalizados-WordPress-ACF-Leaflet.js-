@@ -1,0 +1,897 @@
+<style>
+html, body{ overflow-x:hidden; }
+body{ background:#1f1f23; }
+
+.lwrap{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 22px 22px 26px;
+  border-radius: 18px;
+  background: #2b2b31;
+  border: 1px solid rgba(255,255,255,0.06);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  overflow:hidden;
+}
+
+.ltop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+.ltitle{
+  margin:0;
+  color:#fff;
+  font-size:20px;
+  font-weight:900;
+}
+.lback{
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:#3a3a42;
+  color:#fff;
+  font-weight:900;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.lback:hover{ border-color:#00ff01; color:#000000;box-shadow:0 0 0 3px rgba(0,255,1,0.12); }
+
+.lbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:14px 0 16px;
+  align-items:center;
+}
+.lbar input, .lbar select{
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid #4b4b55;
+  background:#3a3a42;
+  color:#fff;
+  outline:none;
+  min-width: 180px;
+}
+.lbar input{ min-width: 220px; }
+.lbar input:focus, .lbar select:focus{
+  border-color:#00ff01;
+  box-shadow: 0 0 0 3px rgba(0,255,1,0.2);
+}
+.lbtn{
+  padding:10px 14px;
+  border:none;
+  border-radius:12px;
+  background:#00ff01;
+  color:#000;
+  font-weight:900;
+  cursor:pointer;
+}
+.lbtn:hover{ background:#00d800; }
+.lbtn2{
+  padding:10px 14px;
+  border:1px solid rgba(255,255,255,0.14);
+  border-radius:12px;
+  background:#2b2b31;
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+}
+.lmsg{
+  margin-left:auto;
+  color:#fff;
+  font-weight:800;
+  font-size:13px;
+  white-space:nowrap;
+}
+.perr{ color:#ff4d4d; font-weight:900; }
+
+/* Tabela */
+.ltable{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0 10px;
+}
+.ltable th{
+  text-align:left;
+  color:#cfcfcf;
+  font-size:12px;
+  font-weight:800;
+  padding:0 10px 6px;
+}
+.lrow{
+  background:#222228;
+  border:1px solid rgba(255,255,255,0.08);
+}
+.lrow td{
+  padding:12px 10px;
+  color:#fff;
+  font-size:13px;
+  vertical-align:middle;
+}
+
+/* Pills rank */
+.pill{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:950;
+  border:1px solid rgba(255,255,255,0.16);
+}
+.pill-analise{
+  background: rgba(255, 61, 61, 0.18);
+  border-color: rgba(255, 61, 61, 0.45);
+  color: #ff3d3d;
+  box-shadow: 0 0 0 3px rgba(255, 61, 61, 0.10);
+}
+.pill-ouro{
+  background: rgba(255, 214, 0, 0.16);
+  border-color: rgba(255, 214, 0, 0.40);
+  color: #ffd600;
+}
+.pill-prata{
+  background: rgba(220, 220, 220, 0.14);
+  border-color: rgba(220, 220, 220, 0.35);
+  color: #e6e6e6;
+}
+.pill-bronze{
+  background: rgba(205, 127, 50, 0.16);
+  border-color: rgba(205, 127, 50, 0.40);
+  color: #cd7f32;
+}
+.pill-latao{
+  background: rgba(181, 166, 66, 0.16);
+  border-color: rgba(181, 166, 66, 0.40);
+  color: #d6c84f;
+}
+.pill-default{
+  background: rgba(0,255,1,0.15);
+  border-color: rgba(0,255,1,0.35);
+  color: #00ff01;
+}
+
+.lactions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.lactions button{
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:#3a3a42;
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+}
+.lactions button:hover{
+  border-color: rgba(0,255,1,0.35);
+  box-shadow: 0 0 0 3px rgba(0,255,1,0.12);
+}
+.lactions .delBtn{
+  border-color: rgba(255,77,77,0.35);
+}
+.lactions .delBtn:hover{
+  border-color: rgba(255,77,77,0.55);
+  box-shadow: 0 0 0 3px rgba(255,77,77,0.10);
+}
+
+.lpagination{
+  margin-top:18px;
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.lpagination button{
+  padding:8px 12px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:#3a3a42;
+  color:#fff;
+  cursor:pointer;
+  font-weight:900;
+}
+.lpagination button.active{
+  background:#00ff01;
+  color:#000;
+}
+.lpagination button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+/* Modal */
+.modalBackdrop{
+  position:fixed;
+  inset:0;
+  background: rgba(0,0,0,0.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  z-index:9999;
+}
+.modal{
+  width: min(560px, 100%);
+  background:#2b2b31;
+  border:1px solid rgba(255,255,255,0.10);
+  border-radius:16px;
+  padding:16px;
+}
+.mhead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+.mtitle{ margin:0; color:#fff; font-size:16px; font-weight:950; }
+.mclose{
+  border:none;
+  background:#3a3a42;
+  color:#fff;
+  border-radius:10px;
+  padding:8px 10px;
+  cursor:pointer;
+  font-weight:900;
+}
+.mgrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+.mgrid label{
+  display:block;
+  font-size:12px;
+  font-weight:900;
+  color:#fff;
+  margin-bottom:6px;
+}
+.mgrid input, .mgrid select{
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid #4b4b55;
+  background:#3a3a42;
+  color:#fff;
+  outline:none;
+}
+.mgrid input:focus, .mgrid select:focus{
+  border-color:#00ff01;
+  box-shadow: 0 0 0 3px rgba(0,255,1,0.2);
+}
+.mactions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
+.msave{
+  background:#00ff01;
+  color:#000;
+  border:none;
+  border-radius:12px;
+  padding:10px 14px;
+  font-weight:950;
+  cursor:pointer;
+}
+.msave:hover{ background:#00d800; }
+.mnote{ color:#cfcfcf; font-size:12px; font-weight:800; margin-left:auto; }
+
+.mhint{
+  margin-top:10px;
+  color:#cfcfcf;
+  font-size:12px;
+  font-weight:850;
+  line-height:1.35;
+  border:1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  padding:10px 12px;
+  border-radius:12px;
+}
+
+.delBox{
+  margin-top:12px;
+  border:1px solid rgba(255,77,77,0.25);
+  background: rgba(255,77,77,0.06);
+  padding:12px;
+  border-radius:12px;
+}
+.delRow{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-top:10px;
+}
+.delRow button{
+  padding:10px 12px;
+  border-radius:12px;
+  font-weight:950;
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,0.14);
+  background:#3a3a42;
+  color:#fff;
+}
+.delRow .trashBtn{
+  border-color: rgba(255,77,77,0.35);
+}
+.delRow .forceBtn{
+  background:#ff4d4d;
+  color:#000;
+  border:none;
+}
+.delMsg{
+  margin-left:auto;
+  font-weight:900;
+  color:#fff;
+  font-size:12px;
+}
+
+/* MOBILE */
+@media (max-width: 860px){
+  .mgrid{ grid-template-columns: 1fr; }
+}
+@media (max-width: 760px){
+  .lwrap{ padding:16px 14px 18px; }
+  .ltop{ flex-direction:column; align-items:stretch; }
+  .lback{ width:100%; justify-content:center; }
+  .lbar{ flex-direction:column; align-items:stretch; }
+  .lbar input, .lbar select{ width:100%; min-width:0; }
+  .lbtn, .lbtn2{ width:100%; }
+  .lmsg{ margin-left:0; text-align:center; width:100%; white-space:normal; }
+  .ltable thead{ display:none; }
+  .ltable, .ltable tbody, .ltable tr, .ltable td{ display:block; width:100%; }
+  .lrow{ border-radius:14px; overflow:hidden; }
+  .lrow td{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:10px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .lrow td:last-child{ border-bottom:none; }
+  .lrow td::before{
+    content: attr(data-label);
+    color:#cfcfcf;
+    font-weight:900;
+    font-size:12px;
+    flex: 0 0 92px;
+  }
+  .lactions{ justify-content:flex-end; }
+  .lactions button{ width:100%; }
+}
+</style>
+
+<div class="lwrap">
+  <div class="ltop">
+    <h1 class="ltitle">Lista de Usuários</h1>
+    <a class="lback" href="/painel">← Voltar ao Painel</a>
+  </div>
+
+  <div class="lbar">
+    <input id="q" placeholder="Buscar por nome..." />
+    <select id="fRank"></select>
+    <select id="fSetor">
+      <option value="">Setor (todos)</option>
+      <option value="financeiro">Financeiro</option>
+      <option value="comercial">Comercial</option>
+      <option value="operacional">Operacional</option>
+      <option value="rh">RH</option>
+      <option value="administrativo">Administrativo</option>
+    </select>
+    <select id="fStatus">
+      <option value="">Status (todos)</option>
+      <option value="ativo">Ativo</option>
+      <option value="inativo">Inativo</option>
+    </select>
+
+    <button class="lbtn" id="btnApply" type="button">Aplicar</button>
+    <button class="lbtn2" id="btnReset" type="button">Limpar</button>
+
+    <span class="lmsg" id="msg"></span>
+  </div>
+
+  <table class="ltable">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Rank</th>
+        <th>Setor</th>
+        <th>Status</th>
+        <th>Telefone</th>
+        <th>Endereço</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+
+  <div class="lpagination" id="pagination"></div>
+</div>
+
+<div class="modalBackdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="mhead">
+      <h3 class="mtitle" id="mTitle">Editar</h3>
+      <button class="mclose" id="mClose" type="button">Fechar</button>
+    </div>
+
+    <div class="mgrid">
+      <div>
+        <label>Rank</label>
+        <select id="mRank"></select>
+      </div>
+      <div>
+        <label>Status</label>
+        <select id="mStatus">
+          <option value="ativo">Ativo</option>
+          <option value="inativo">Inativo</option>
+        </select>
+      </div>
+      <div>
+        <label>Setor</label>
+        <select id="mSetor">
+          <option value="financeiro">Financeiro</option>
+          <option value="comercial">Comercial</option>
+          <option value="operacional">Operacional</option>
+          <option value="rh">RH</option>
+          <option value="administrativo">Administrativo</option>
+        </select>
+      </div>
+      <div>
+        <label>Telefone</label>
+        <input id="mTel" placeholder="(21) 99999-9999" />
+      </div>
+    </div>
+
+    <div class="mhint">
+      <b>Endereço não é editável por aqui.</b><br>
+      Para alterar endereço/localização, use o <b>Mapa</b> (editar ponto/posição).
+    </div>
+
+    <div class="delBox" id="delBox" style="display:none;">
+      <b style="color:#ff4d4d;">Excluir usuário</b><br>
+      Você pode mandar para a lixeira ou excluir definitivamente.
+      <div class="delRow">
+        <button class="trashBtn" id="btnTrash" type="button">Excluir (lixeira)</button>
+        <button class="forceBtn" id="btnForce" type="button">Excluir definitivo</button>
+        <span class="delMsg" id="delMsg"></span>
+      </div>
+    </div>
+
+    <div class="mactions">
+      <button class="msave" id="mSave" type="button">Salvar</button>
+      <span class="mnote" id="mMsg"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener('load', function () {
+  var cfg = document.getElementById('restcfg');
+  var REST = cfg ? cfg.dataset.rest : null;
+  var NONCE = cfg ? cfg.dataset.nonce : null;
+
+  var msg = document.getElementById('msg');
+  var tbody = document.getElementById('tbody');
+  var pagination = document.getElementById('pagination');
+
+  var q = document.getElementById('q');
+  var fRank = document.getElementById('fRank');
+  var fSetor = document.getElementById('fSetor');
+  var fStatus = document.getElementById('fStatus');
+  var btnApply = document.getElementById('btnApply');
+  var btnReset = document.getElementById('btnReset');
+
+  var modalBackdrop = document.getElementById('modalBackdrop');
+  var mClose = document.getElementById('mClose');
+  var mTitle = document.getElementById('mTitle');
+  var mRank = document.getElementById('mRank');
+  var mStatus = document.getElementById('mStatus');
+  var mSetor = document.getElementById('mSetor');
+  var mTel = document.getElementById('mTel');
+  var mSave = document.getElementById('mSave');
+  var mMsg = document.getElementById('mMsg');
+
+  var delBox = document.getElementById('delBox');
+  var btnTrash = document.getElementById('btnTrash');
+  var btnForce = document.getElementById('btnForce');
+  var delMsg = document.getElementById('delMsg');
+
+  if (!REST || !NONCE) {
+    msg.innerHTML = '<span class="perr">Faltou o shortcode [rest_cfg] nesta página.</span>';
+    return;
+  }
+
+  var TAX_REST_BASE = 'classificacao';
+  var PER_PAGE_LOCAL = 10;
+
+  var rankTerms = [];
+  var termById = {};
+  var peopleAll = [];
+  var peopleFiltered = [];
+  var currentPage = 1;
+  var current = null;
+
+  function norm(str){ return (str || '').toString().trim().toLowerCase(); }
+  function safeName(p){ return (p && p.title && p.title.rendered) ? p.title.rendered : '(sem nome)'; }
+
+  function classForSlug(slug){
+    slug = (slug || '').toLowerCase();
+    if (slug === 'em-analise' || slug === 'em_analise') return 'pill-analise';
+    if (slug === 'ouro') return 'pill-ouro';
+    if (slug === 'prata') return 'pill-prata';
+    if (slug === 'bronze') return 'pill-bronze';
+    if (slug === 'latao' || slug === 'latão') return 'pill-latao';
+    return 'pill-default';
+  }
+
+  function pillForRank(rankId){
+    if (!rankId) return '<span class="pill pill-analise">Sem rank</span>';
+    var t = termById[String(rankId)];
+    if (!t) return '<span class="pill pill-default">Rank</span>';
+    var cls = classForSlug(t.slug);
+    var label = (t.slug === 'em-analise' || t.slug === 'em_analise') ? 'Em análise' : t.name;
+    return '<span class="pill ' + cls + '">' + label + '</span>';
+  }
+
+  async function loadRanks(){
+    fRank.innerHTML = '<option value="">Rank (todos)</option>';
+    mRank.innerHTML = '';
+
+    var r = await fetch(REST + 'wp/v2/' + TAX_REST_BASE + '?per_page=100', {
+      headers: { 'X-WP-Nonce': NONCE }
+    });
+
+    if(!r.ok){
+      console.log('Erro ranks:', await r.text());
+      fRank.innerHTML = '<option value="">(erro ao carregar ranks)</option>';
+      mRank.innerHTML = '<option value="">(erro)</option>';
+      return;
+    }
+
+    rankTerms = await r.json();
+    rankTerms.sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+
+    termById = {};
+    rankTerms.forEach(function(t){ termById[String(t.id)] = t; });
+
+    for (var i=0; i<rankTerms.length; i++){
+      var t = rankTerms[i];
+      var label = (t.slug === 'em-analise' || t.slug === 'em_analise') ? 'Em análise' : t.name;
+
+      var optF = document.createElement('option');
+      optF.value = String(t.id);
+      optF.textContent = label;
+      fRank.appendChild(optF);
+
+      var optM = document.createElement('option');
+      optM.value = String(t.id);
+      optM.textContent = label;
+      mRank.appendChild(optM);
+    }
+  }
+
+  async function loadPeople(){
+    msg.textContent = 'Carregando...';
+    tbody.innerHTML = '';
+    pagination.innerHTML = '';
+
+    var url = REST + 'wp/v2/pessoas?per_page=100&status=publish&_fields=id,title,acf,' + TAX_REST_BASE;
+
+    var r = await fetch(url, { headers: { 'X-WP-Nonce': NONCE } });
+    if(!r.ok){
+      console.log('Erro pessoas:', await r.text());
+      msg.innerHTML = '<span class="perr">Erro ao carregar pessoas.</span>';
+      return;
+    }
+
+    peopleAll = await r.json();
+    applyFilters(true);
+  }
+
+  function applyFilters(resetPage){
+    if (resetPage) currentPage = 1;
+
+    var query = norm(q.value);
+    var rankIdFilter = fRank.value;
+    var setorFilter = fSetor.value;
+    var statusFilter = fStatus.value;
+
+    peopleFiltered = peopleAll.filter(function(p){
+      var name = norm(safeName(p));
+
+      var rankIds = p[TAX_REST_BASE];
+      var rankId = (rankIds && rankIds.length) ? String(rankIds[0]) : '';
+
+      var setor = p.acf ? (p.acf.setor || '') : '';
+      var st = p.acf ? (p.acf.status || '') : '';
+      var tel = p.acf ? (p.acf.telefone || '') : '';
+      var endTxt = p.acf ? (p.acf.endereco_texto || '') : '';
+
+      if (query) {
+        var hay = (name + ' ' + tel + ' ' + endTxt).toLowerCase();
+        if (hay.indexOf(query) === -1) return false;
+      }
+
+      if (rankIdFilter && rankId !== String(rankIdFilter)) return false;
+      if (setorFilter && setor !== setorFilter) return false;
+      if (statusFilter && st !== statusFilter) return false;
+
+      return true;
+    });
+
+    renderPage();
+  }
+
+  function renderPagination(totalPages){
+    pagination.innerHTML = '';
+    if (totalPages <= 1) return;
+
+    var prev = document.createElement('button');
+    prev.textContent = 'Anterior';
+    prev.disabled = currentPage === 1;
+    prev.addEventListener('click', function(){
+      currentPage--;
+      renderPage();
+    });
+    pagination.appendChild(prev);
+
+    var windowSize = 5;
+    var start = Math.max(1, currentPage - Math.floor(windowSize/2));
+    var end = Math.min(totalPages, start + windowSize - 1);
+    start = Math.max(1, end - windowSize + 1);
+
+    for (var i=start; i<=end; i++){
+      var b = document.createElement('button');
+      b.textContent = String(i);
+      if (i === currentPage) b.classList.add('active');
+      (function(page){
+        b.addEventListener('click', function(){
+          currentPage = page;
+          renderPage();
+        });
+      })(i);
+      pagination.appendChild(b);
+    }
+
+    var next = document.createElement('button');
+    next.textContent = 'Próxima';
+    next.disabled = currentPage === totalPages;
+    next.addEventListener('click', function(){
+      currentPage++;
+      renderPage();
+    });
+    pagination.appendChild(next);
+  }
+
+  function renderPage(){
+    tbody.innerHTML = '';
+
+    var total = peopleFiltered.length;
+    if(!total){
+      msg.textContent = 'Nenhum resultado.';
+      pagination.innerHTML = '';
+      return;
+    }
+
+    var totalPages = Math.max(1, Math.ceil(total / PER_PAGE_LOCAL));
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    var start = (currentPage - 1) * PER_PAGE_LOCAL;
+    var end = start + PER_PAGE_LOCAL;
+    var slice = peopleFiltered.slice(start, end);
+
+    msg.textContent = total + ' resultado(s) — página ' + currentPage + '/' + totalPages;
+
+    for (var i=0; i<slice.length; i++){
+      (function(p){
+        var name = safeName(p);
+        var setor = p.acf ? (p.acf.setor || '-') : '-';
+        var st = p.acf ? (p.acf.status || '-') : '-';
+        var tel = p.acf ? (p.acf.telefone || '-') : '-';
+        var endTxt = p.acf ? (p.acf.endereco_texto || '-') : '-';
+
+        var rankIds = p[TAX_REST_BASE];
+        var rankId = (rankIds && rankIds.length) ? rankIds[0] : null;
+
+        var tr = document.createElement('tr');
+        tr.className = 'lrow';
+
+        tr.innerHTML =
+          '<td data-label="Nome">' + name + '</td>' +
+          '<td data-label="Rank">' + pillForRank(rankId) + '</td>' +
+          '<td data-label="Setor">' + setor + '</td>' +
+          '<td data-label="Status">' + st + '</td>' +
+          '<td data-label="Telefone">' + tel + '</td>' +
+          '<td data-label="Endereço">' + endTxt + '</td>' +
+          '<td data-label="Ações" class="lactions">' +
+            '<button type="button" class="editBtn">Editar</button>' +
+            '<button type="button" class="delBtn">Excluir</button>' +
+          '</td>';
+
+        tr.querySelector('.editBtn').addEventListener('click', function(){
+          openModal(p);
+        });
+
+        tr.querySelector('.delBtn').addEventListener('click', function(){
+          openModal(p);
+          delBox.style.display = 'block';
+          delMsg.textContent = '';
+        });
+
+        tbody.appendChild(tr);
+      })(slice[i]);
+    }
+
+    renderPagination(totalPages);
+  }
+
+  function openModal(p){
+    current = p;
+    mMsg.textContent = '';
+    delMsg.textContent = '';
+    delBox.style.display = 'block';
+
+    mTitle.textContent = 'Editar: ' + safeName(p);
+
+    mTel.value = (p.acf && p.acf.telefone) ? p.acf.telefone : '';
+    mSetor.value = (p.acf && p.acf.setor) ? p.acf.setor : 'administrativo';
+    mStatus.value = (p.acf && p.acf.status) ? p.acf.status : 'ativo';
+
+    var rankIds = p[TAX_REST_BASE];
+    var rankId = (rankIds && rankIds.length) ? String(rankIds[0]) : '';
+
+    if (rankId) mRank.value = rankId;
+    else mRank.value = (rankTerms[0] ? String(rankTerms[0].id) : '');
+
+    modalBackdrop.style.display = 'flex';
+  }
+
+  function closeModal(){
+    modalBackdrop.style.display = 'none';
+    current = null;
+  }
+
+  mClose.addEventListener('click', closeModal);
+  modalBackdrop.addEventListener('click', function(e){
+    if (e.target === modalBackdrop) closeModal();
+  });
+
+  mSave.addEventListener('click', async function(){
+    if (!current) return;
+
+    mSave.disabled = true;
+    mMsg.textContent = 'Salvando...';
+
+    try{
+      var payload = {};
+      var newRankId = parseInt(mRank.value, 10);
+      payload[TAX_REST_BASE] = [newRankId];
+
+      var prevAcf = (current && current.acf) ? current.acf : {};
+      payload.acf = Object.assign({}, prevAcf, {
+        telefone: mTel.value,
+        setor: mSetor.value,
+        status: mStatus.value,
+        rank: newRankId
+      });
+
+      var r = await fetch(REST + 'wp/v2/pessoas/' + current.id, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-WP-Nonce': NONCE
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if(!r.ok){
+        console.log('Erro update:', await r.text());
+        mMsg.innerHTML = '<span class="perr">Erro ao salvar (veja o console).</span>';
+        mSave.disabled = false;
+        return;
+      }
+
+      mMsg.textContent = 'Salvo!';
+      closeModal();
+      await loadPeople();
+
+    }catch(e){
+      console.log(e);
+      mMsg.innerHTML = '<span class="perr">Erro inesperado.</span>';
+    } finally {
+      mSave.disabled = false;
+    }
+  });
+
+  async function deletePerson(personId, force){
+    var url = REST + 'wp/v2/pessoas/' + personId + '?force=' + (force ? 'true' : 'false');
+
+    var r = await fetch(url, {
+      method: 'DELETE',
+      headers: { 'X-WP-Nonce': NONCE }
+    });
+
+    if(!r.ok){
+      var t = await r.text();
+      console.log('Erro delete:', t);
+      throw new Error('Erro ao excluir');
+    }
+
+    return true;
+  }
+
+  btnTrash.addEventListener('click', async function(){
+    if (!current) return;
+
+    var ok = confirm('Excluir "' + safeName(current) + '" (lixeira)?');
+    if (!ok) return;
+
+    btnTrash.disabled = true;
+    btnForce.disabled = true;
+    delMsg.textContent = 'Excluindo...';
+
+    try{
+      await deletePerson(current.id, false);
+      closeModal();
+      await loadPeople();
+    }catch(e){
+      console.log(e);
+      delMsg.innerHTML = '<span class="perr">Erro ao excluir (console).</span>';
+    } finally {
+      btnTrash.disabled = false;
+      btnForce.disabled = false;
+    }
+  });
+
+  btnForce.addEventListener('click', async function(){
+    if (!current) return;
+
+    var ok = confirm('Excluir DEFINITIVAMENTE "' + safeName(current) + '"?');
+    if (!ok) return;
+
+    btnTrash.disabled = true;
+    btnForce.disabled = true;
+    delMsg.textContent = 'Excluindo definitivo...';
+
+    try{
+      await deletePerson(current.id, true);
+      closeModal();
+      await loadPeople();
+    }catch(e){
+      console.log(e);
+      delMsg.innerHTML = '<span class="perr">Erro ao excluir (console).</span>';
+    } finally {
+      btnTrash.disabled = false;
+      btnForce.disabled = false;
+    }
+  });
+
+  btnApply.addEventListener('click', function(){ applyFilters(true); });
+  btnReset.addEventListener('click', function(){
+    q.value = '';
+    fRank.value = '';
+    fSetor.value = '';
+    fStatus.value = '';
+    applyFilters(true);
+  });
+  q.addEventListener('keydown', function(ev){
+    if (ev.key === 'Enter'){ ev.preventDefault(); applyFilters(true); }
+  });
+
+  (async function(){
+    await loadRanks();
+    await loadPeople();
+  })();
+});
+</script>

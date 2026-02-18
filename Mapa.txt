@@ -1,0 +1,1252 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+*{ box-sizing:border-box; }
+html, body{ width:100%; max-width:100%; overflow-x:hidden; }
+body{ margin:0; background:#1f1f23; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+
+:root{
+  --card:#2b2b31;
+  --card2:#222228;
+  --input:#3a3a42;
+  --border:rgba(255,255,255,0.10);
+  --border2:rgba(255,255,255,0.14);
+  --muted:#cfcfcf;
+  --green:#00ff01;
+
+  --inactive:#6b7280;
+  --rank-analise:#ff3d3d;
+  --rank-ouro:#ffd600;
+  --rank-prata:#e6e6e6;
+  --rank-bronze:#cd7f32;
+  --rank-latao:#2dd4bf;
+}
+
+.mwrap{ width:100%; margin:0; padding:10px; }
+
+/* ✅ DESKTOP: esquerda | mapa | direita */
+.mgrid{
+  display:grid;
+  grid-template-columns: 420px minmax(0, 1fr) 340px;
+  gap:10px;
+  width:100%;
+  max-width:100%;
+}
+
+.panel{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  overflow:hidden;
+  min-width:0;
+}
+
+.head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.title{ margin:0; color:#fff; font-size:14px; font-weight:950; }
+.submsg{
+  margin-left:auto;
+  color:var(--muted);
+  font-weight:850;
+  font-size:12px;
+  white-space:nowrap;
+  max-width:100%;
+}
+.body{ padding:12px; color:#fff; }
+.helper{ color:var(--muted); font-weight:800; font-size:13px; line-height:1.35; }
+
+/* ✅ botões topo */
+.topActions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.backBtn{
+  padding:9px 12px;
+  border-radius:12px;
+  border:1px solid var(--border2);
+  background:var(--input);
+  color:#fff;
+  font-weight:950;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
+}
+.backBtn:hover{
+  color:#000;
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(0,255,1,0.12);
+}
+.createBtn{
+  padding:9px 12px;
+  border-radius:12px;
+  border:none;
+  background:var(--green);
+  color:#000;
+  font-weight:950;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
+}
+.createBtn:hover{ background:#00d800; }
+
+/* Details */
+.profile{ display:flex; gap:12px; align-items:center; margin-bottom:12px; }
+.avatar{
+  width:64px; height:64px;
+  border-radius:14px;
+  background:var(--card2);
+  border:1px solid rgba(255,255,255,0.10);
+  overflow:hidden;
+  flex:0 0 auto;
+}
+.avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+.pname{ margin:0; font-size:15px; font-weight:950; }
+.pmeta{ margin:4px 0 0; color:var(--muted); font-size:12px; font-weight:800; }
+
+.gridInfo{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+.kv{
+  background:var(--card2);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;
+  padding:10px;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+.k{ display:block; font-size:11px; font-weight:950; color:var(--muted); margin-bottom:6px; }
+.v{ display:block; font-size:13px; font-weight:900; color:#fff; }
+.full{ grid-column:1/-1; }
+
+/* Pills */
+.pill{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.16);
+  font-size:12px;
+  font-weight:950;
+}
+.pill-ativo{
+  background: rgba(0,255,1,0.15);
+  border-color: rgba(0,255,1,0.35);
+  color: var(--green);
+}
+.pill-inativo{
+  background: rgba(107, 114, 128, 0.20);
+  border-color: rgba(107, 114, 128, 0.50);
+  color: var(--inactive);
+  box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.10);
+}
+
+/* rank pills */
+.pill-rank-analise{
+  background: rgba(255, 61, 61, 0.18);
+  border-color: rgba(255, 61, 61, 0.45);
+  color: var(--rank-analise);
+  box-shadow: 0 0 0 3px rgba(255, 61, 61, 0.10);
+}
+.pill-rank-ouro{ background: rgba(255,214,0,0.16); border-color: rgba(255,214,0,0.40); color: var(--rank-ouro); }
+.pill-rank-prata{ background: rgba(230,230,230,0.14); border-color: rgba(230,230,230,0.35); color: var(--rank-prata); }
+.pill-rank-bronze{ background: rgba(205,127,50,0.16); border-color: rgba(205,127,50,0.40); color: var(--rank-bronze); }
+.pill-rank-latao{ background: rgba(45, 212, 191, 0.16); border-color: rgba(45, 212, 191, 0.40); color: var(--rank-latao); }
+
+/* Buttons / inputs */
+.row{ margin-bottom:10px; }
+.row label{ display:block; font-size:11px; font-weight:950; color:#fff; margin-bottom:6px; }
+.row input, .row select, .row textarea{
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid #4b4b55;
+  background:var(--input);
+  color:#fff;
+  outline:none;
+}
+.row textarea{ min-height:86px; resize:vertical; }
+.row input:focus, .row select:focus, .row textarea:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(0,255,1,0.2);
+}
+
+.btns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+.btn{
+  padding:10px 12px;
+  border-radius:12px;
+  font-weight:950;
+  cursor:pointer;
+  border:1px solid var(--border2);
+  background:var(--card);
+  color:#fff;
+}
+.btnPrimary{ background:var(--green); color:#000; border:none; }
+.btnPrimary:hover{ background:#00d800; }
+.btn:hover{ border-color:rgba(0,255,1,0.35); box-shadow:0 0 0 3px rgba(0,255,1,0.12); }
+
+.note{ color:var(--muted); font-size:11px; font-weight:850; line-height:1.35; margin-top:8px; }
+.err{ color:#ff4d4d; font-weight:950; }
+
+/* Map */
+#map{
+  width:100%;
+  height: calc(100vh - 120px);
+  min-height: 620px;
+  max-width:100%;
+}
+
+/* Leaflet popup dark */
+.leaflet-popup-content-wrapper{ background:#2b2b31; color:#fff; border:1px solid rgba(255,255,255,0.12); }
+.leaflet-popup-tip{ background:#2b2b31; }
+
+/* Marker */
+.mkr{
+  width:18px; height:18px;
+  border-radius:999px;
+  border:2px solid rgba(0,0,0,0.35);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.10);
+}
+
+/* ✅ MOBILE */
+@media (max-width: 760px){
+  .mgrid{ grid-template-columns:1fr; }
+  #map{ height: 520px; min-height:520px; }
+  .submsg{ white-space:normal; }
+  .btns .btn{ width:100%; }
+  .topActions{ width:100%; }
+  .backBtn, .createBtn{ width:100%; justify-content:center; }
+}
+</style>
+
+<div class="mwrap">
+  <div class="mgrid" id="grid">
+
+    <!-- LEFT -->
+    <div class="panel" id="leftPanel">
+      <div class="head">
+        <h3 class="title">Detalhes da Pessoa</h3>
+        <span class="submsg" id="leftMsg">Clique em um ponto</span>
+      </div>
+      <div class="body" id="leftBody">
+        <div class="helper">Clique em um ponto no mapa para ver todas as informações aqui.</div>
+      </div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="panel">
+      <div class="head">
+        <div class="topActions">
+          <a class="backBtn" href="/painel">← Voltar ao Painel</a>
+          <a class="createBtn" href="/cadastro-admin">＋ Adicionar Usuário</a>
+        </div>
+        <span class="submsg" id="mapMsg">Carregando…</span>
+      </div>
+      <div id="map"></div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="panel" id="rightPanel">
+      <div class="head">
+        <h3 class="title">Filtros</h3>
+        <span class="submsg" id="fltMsg"></span>
+      </div>
+      <div class="body">
+        <div class="row">
+          <label>Buscar (nome/telefone)</label>
+          <input id="q" placeholder="Ex: João ou 21 9xxxx..." />
+        </div>
+
+        <div class="row">
+          <label>Rank</label>
+          <select id="fRank">
+            <option value="">Todos</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <label>Setor</label>
+          <select id="fSetor">
+            <option value="">Todos</option>
+            <option value="financeiro">Financeiro</option>
+            <option value="comercial">Comercial</option>
+            <option value="operacional">Operacional</option>
+            <option value="rh">RH</option>
+            <option value="administrativo">Administrativo</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <label>Status</label>
+          <select id="fStatus">
+            <option value="">Todos</option>
+            <option value="ativo">Ativo</option>
+            <option value="inativo">Inativo</option>
+          </select>
+        </div>
+
+        <div class="btns">
+          <button class="btn btnPrimary" id="btnApply" type="button">Aplicar</button>
+          <button class="btn" id="btnReset" type="button">Limpar</button>
+        </div>
+
+        <div class="note">
+          No painel da esquerda você edita <b>endereço_texto</b>. Ao salvar, o sistema busca novas coordenadas e move o ponto.
+          <br><br>
+          Se você <b>arrastar o ponto</b> e salvar, o endereço calculado vira o <b>endereço_texto</b> (só nesse caso).
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+window.addEventListener('load', function () {
+  // REST cfg (pra salvar)
+  var cfg = document.getElementById('restcfg');
+  var REST = cfg ? cfg.dataset.rest : '/wp-json/';
+  var NONCE = cfg ? cfg.dataset.nonce : null;
+
+  // ✅ mapa default: Brasil
+  var DEFAULT_VIEW = { lat: -14.2350, lng: -51.9253, zoom: 4 };
+
+  // MAP
+  var map = L.map('map', { zoomControl:true }).setView([DEFAULT_VIEW.lat, DEFAULT_VIEW.lng], DEFAULT_VIEW.zoom);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+
+  // UI
+  var mapMsg = document.getElementById('mapMsg');
+  var leftMsg = document.getElementById('leftMsg');
+  var leftBody = document.getElementById('leftBody');
+
+  var q = document.getElementById('q');
+  var fRank = document.getElementById('fRank');
+  var fSetor = document.getElementById('fSetor');
+  var fStatus = document.getElementById('fStatus');
+  var btnApply = document.getElementById('btnApply');
+  var btnReset = document.getElementById('btnReset');
+
+  // Data
+  var TAX_REST_BASE = 'classificacao';
+  var peopleAll = [];
+  var rankTerms = [];
+  var termById = {};
+  var markersLayer = L.layerGroup().addTo(map);
+  var markerByPersonId = {};
+  var current = null;
+  var editMode = false;
+
+  // cache
+  var addrCache = new Map(); // reverse
+  var geoCache  = new Map(); // geocode texto -> latlng
+
+  // flag: se houve arrasto desde o último clique
+  var draggedPosById = {}; // { personId: {lat,lng, calcAddr} }
+
+  function norm(s){ return (s||'').toString().trim().toLowerCase(); }
+  function parseCoord(v){ if(v===null||v===undefined) return NaN; return parseFloat(String(v).trim().replace(',', '.')); }
+  function round5(n){ return Math.round(n * 1e5) / 1e5; }
+  function keyLL(lat,lng){ return round5(lat) + ',' + round5(lng); }
+
+  function getName(p){ return (p && p.title && p.title.rendered) ? p.title.rendered : ''; }
+
+  // meta / acf helpers
+  function getMeta(p, k){ return (p && p.meta && p.meta[k] != null) ? String(p.meta[k]) : ''; }
+  function getAcf(p, k){ return (p && p.acf && p.acf[k] != null) ? p.acf[k] : ''; }
+
+  function getPhone(p){
+    return (getAcf(p,'telefone') || getMeta(p,'telefone') || '').toString();
+  }
+  function getSetor(p){
+    return (getAcf(p,'setor') || getMeta(p,'setor') || '').toString();
+  }
+  function getStatus(p){
+    return (getAcf(p,'status') || getMeta(p,'status') || '').toString() || 'ativo';
+  }
+
+  function getAddressText(p){
+    var a = getAcf(p, 'endereco_texto'); if (a) return String(a);
+    a = getAcf(p, 'endereco'); if (a) return String(a);
+    var m = getMeta(p, 'endereco_texto'); if (m) return m;
+    m = getMeta(p, 'endereco'); if (m) return m;
+    return '';
+  }
+
+  function getLatLng(p){
+    var lat = parseCoord((p && p.meta) ? p.meta.latitude : null);
+    var lng = parseCoord((p && p.meta) ? p.meta.longitude : null);
+
+    if (isNaN(lat) || isNaN(lng)){
+      lat = parseCoord(getAcf(p, 'latitude'));
+      lng = parseCoord(getAcf(p, 'longitude'));
+    }
+    if (isNaN(lat) || isNaN(lng)) return null;
+    return {lat:lat, lng:lng};
+  }
+
+  function getRankId(p){
+    var ids = p ? p[TAX_REST_BASE] : null;
+    var rid = (ids && ids.length) ? parseInt(ids[0], 10) : 0;
+    if (!rid){
+      var r2 = parseInt(getAcf(p,'rank'), 10);
+      if (!isNaN(r2) && r2 > 0) rid = r2;
+    }
+    return rid || 0;
+  }
+
+  function getRankTerm(p){
+    var id = String(getRankId(p) || '');
+    return id ? (termById[id] || null) : null;
+  }
+  function getRankSlug(p){
+    var t = getRankTerm(p);
+    return t ? norm(t.slug) : 'em-analise';
+  }
+  function getRankLabel(p){
+    var t = getRankTerm(p);
+    if (!t) return 'Em análise';
+    var s = norm(t.slug);
+    return (s === 'em-analise' || s === 'em_analise') ? 'Em análise' : (t.name || 'Rank');
+  }
+
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  function rankColorFromSlug(slug){
+    slug = norm(slug);
+    if (slug === 'em-analise' || slug === 'em_analise') return cssVar('--rank-analise');
+    if (slug === 'ouro') return cssVar('--rank-ouro');
+    if (slug === 'prata') return cssVar('--rank-prata');
+    if (slug === 'bronze') return cssVar('--rank-bronze');
+    if (slug === 'latao' || slug === 'latão') return cssVar('--rank-latao');
+    return cssVar('--rank-analise');
+  }
+  function rankPillClassFromSlug(slug){
+    slug = norm(slug);
+    if (slug === 'em-analise' || slug === 'em_analise') return 'pill-rank-analise';
+    if (slug === 'ouro') return 'pill-rank-ouro';
+    if (slug === 'prata') return 'pill-rank-prata';
+    if (slug === 'bronze') return 'pill-rank-bronze';
+    if (slug === 'latao' || slug === 'latão') return 'pill-rank-latao';
+    return 'pill-rank-analise';
+  }
+
+  function statusSlug(p){ return norm(getStatus(p)); }
+  function pillStatus(st){
+    st = norm(st);
+    if (st === 'inativo') return '<span class="pill pill-inativo">Inativo</span>';
+    return '<span class="pill pill-ativo">Ativo</span>';
+  }
+
+  function markerIcon(p){
+    var inactive = (statusSlug(p) === 'inativo');
+    var color = inactive ? cssVar('--inactive') : rankColorFromSlug(getRankSlug(p));
+    return L.divIcon({
+      className: '',
+      html: '<div class="mkr" style="background:'+color+'"></div>',
+      iconSize: [18,18],
+      iconAnchor: [9,9]
+    });
+  }
+
+  // ✅ FOTO (opcional)
+  async function resolvePhotoUrl(p){
+    var url = getMeta(p, 'foto_url');
+    if (url) return url;
+
+    var acfFoto = getAcf(p,'foto') || getAcf(p,'imagem') || getAcf(p,'photo') || getAcf(p,'foto_url');
+
+    if (typeof acfFoto === 'string' && (acfFoto.startsWith('http://') || acfFoto.startsWith('https://'))) return acfFoto;
+
+    if (typeof acfFoto === 'number' || (typeof acfFoto === 'string' && /^\d+$/.test(acfFoto))){
+      var id = parseInt(acfFoto, 10);
+      if (id > 0){
+        try{
+          var r = await fetch(REST + 'wp/v2/media/' + id);
+          if (r.ok){
+            var j = await r.json();
+            if (j?.media_details?.sizes?.medium?.source_url) return j.media_details.sizes.medium.source_url;
+            if (j?.media_details?.sizes?.thumbnail?.source_url) return j.media_details.sizes.thumbnail.source_url;
+            if (j?.source_url) return j.source_url;
+          }
+        }catch(e){}
+      }
+    }
+
+    if (acfFoto && typeof acfFoto === 'object'){
+      if (acfFoto.url) return acfFoto.url;
+      if (acfFoto.sizes && acfFoto.sizes.medium) return acfFoto.sizes.medium;
+      if (acfFoto.sizes && acfFoto.sizes.thumbnail) return acfFoto.sizes.thumbnail;
+    }
+
+    var fm = (p && p.featured_media) ? parseInt(p.featured_media, 10) : 0;
+    if (fm > 0){
+      try{
+        var r3 = await fetch(REST + 'wp/v2/media/' + fm);
+        if (r3.ok){
+          var j3 = await r3.json();
+          if (j3?.media_details?.sizes?.medium?.source_url) return j3.media_details.sizes.medium.source_url;
+          if (j3?.media_details?.sizes?.thumbnail?.source_url) return j3.media_details.sizes.thumbnail.source_url;
+          if (j3?.source_url) return j3.source_url;
+        }
+      }catch(e){}
+    }
+
+    return '';
+  }
+
+  // reverse geocode (lat/lng -> address)
+  async function reverseGeocode(lat, lng){
+    var k = keyLL(lat,lng);
+    if (addrCache.has(k)) return addrCache.get(k);
+
+    var url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='
+      + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lng);
+
+    try{
+      var r = await fetch(url, { headers: { 'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.6' } });
+      if (!r.ok) throw new Error('reverse status ' + r.status);
+      var j = await r.json();
+      var addr = (j && j.display_name) ? j.display_name : '';
+      addrCache.set(k, addr || '');
+      return addr || '';
+    }catch(e){
+      addrCache.set(k, '');
+      return '';
+    }
+  }
+
+  // geocode (texto -> lat/lng)
+  async function geocodeAddress(query){
+    var qn = (query || '').toString().trim();
+    if (!qn) return null;
+
+    var key = norm(qn);
+    if (geoCache.has(key)) return geoCache.get(key);
+
+    var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(qn);
+
+    try{
+      var r = await fetch(url, { headers: { 'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.6' } });
+      if (!r.ok) throw new Error('geo status ' + r.status);
+      var j = await r.json();
+      if (!j || !j.length){ geoCache.set(key, null); return null; }
+
+      var lat = parseFloat(j[0].lat);
+      var lng = parseFloat(j[0].lon);
+      if (isNaN(lat) || isNaN(lng)){ geoCache.set(key, null); return null; }
+
+      var out = { lat: lat, lng: lng };
+      geoCache.set(key, out);
+      return out;
+    }catch(e){
+      geoCache.set(key, null);
+      return null;
+    }
+  }
+
+  function mustNonce(){
+    if (!NONCE) throw new Error('Sem NONCE');
+  }
+
+  // ✅ garante ACF required sempre presente (corrige o erro do console)
+  function buildAcfRequired(p, overrides){
+    var tel = getPhone(p).trim();
+    var setor = getSetor(p).trim();
+    var st = getStatus(p).trim();
+    var rankId = getRankId(p);
+
+    // override (se veio)
+    if (overrides && overrides.telefone != null) tel = String(overrides.telefone).trim();
+    if (overrides && overrides.setor != null) setor = String(overrides.setor).trim();
+    if (overrides && overrides.status != null) st = String(overrides.status).trim();
+    if (overrides && overrides.rank != null) rankId = parseInt(overrides.rank, 10) || rankId;
+
+    // se telefone for required e estiver vazio, falha claro (pra não dar 400 confuso)
+    if (!tel){
+      throw new Error('Telefone obrigatório está vazio (ACF required).');
+    }
+
+    var base = Object.assign({}, (p.acf || {}));
+
+    // mantém compatibilidade: rank também no ACF (se você usa)
+    base.telefone = tel;
+    base.setor = setor || base.setor || '';
+    base.status = st || base.status || 'ativo';
+    base.rank = rankId || base.rank || '';
+
+    // aplica overrides extras sem perder nada
+    if (overrides){
+      Object.keys(overrides).forEach(function(k){
+        base[k] = overrides[k];
+      });
+    }
+
+    return base;
+  }
+
+  // ✅ salva endereço_texto + lat/lng (meta + acf) — usado no "Salvar endereço e mover ponto"
+  async function saveAddressAndCoords(p, enderecoTexto, lat, lng){
+    mustNonce();
+
+    var acfPayload = buildAcfRequired(p, {
+      endereco_texto: enderecoTexto,
+      endereco: enderecoTexto, // fallback se você ainda usa
+      latitude: String(lat),
+      longitude: String(lng)
+    });
+
+    var payload = {
+      acf: acfPayload,
+      meta: {
+        latitude: String(lat),
+        longitude: String(lng)
+      }
+    };
+
+    var r = await fetch(REST + 'wp/v2/pessoas/' + p.id, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-WP-Nonce': NONCE
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!r.ok){
+      var t = await r.text();
+      console.log('Erro salvar endereço/coords:', t);
+      throw new Error('Erro REST');
+    }
+
+    // atualiza objeto local (UI)
+    p.acf = p.acf || {};
+    p.meta = p.meta || {};
+
+    p.acf.endereco_texto = enderecoTexto;
+    p.acf.endereco = enderecoTexto;
+    p.acf.latitude = String(lat);
+    p.acf.longitude = String(lng);
+
+    p.meta.latitude = String(lat);
+    p.meta.longitude = String(lng);
+
+    return true;
+  }
+
+  // ✅ salva Status/Setor/Rank pelo mapa
+  async function saveBasicsFromMap(p, newStatus, newSetor, newRankId){
+    mustNonce();
+
+    var rankIdInt = parseInt(newRankId, 10) || 0;
+    if (!rankIdInt) throw new Error('Rank inválido');
+
+    var acfPayload = buildAcfRequired(p, {
+      status: newStatus,
+      setor: newSetor,
+      rank: rankIdInt
+    });
+
+    var payload = {};
+    payload[TAX_REST_BASE] = [rankIdInt];
+    payload.acf = acfPayload;
+    payload.meta = {
+      telefone: acfPayload.telefone,
+      setor: acfPayload.setor,
+      status: acfPayload.status
+    };
+
+    var r = await fetch(REST + 'wp/v2/pessoas/' + p.id, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-WP-Nonce': NONCE
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!r.ok){
+      var t = await r.text();
+      console.log('Erro salvar dados:', t);
+      throw new Error('Erro REST');
+    }
+
+    // atualiza local
+    p.acf = p.acf || {};
+    p.meta = p.meta || {};
+
+    p.acf.status = String(newStatus);
+    p.acf.setor = String(newSetor);
+    p.acf.rank = rankIdInt;
+
+    p.meta.status = String(newStatus);
+    p.meta.setor = String(newSetor);
+
+    p[TAX_REST_BASE] = [rankIdInt];
+
+    return true;
+  }
+
+  function popupHtml(p){
+    var nome = getName(p);
+    var tel = getPhone(p);
+    var setor = getSetor(p);
+    var status = getStatus(p);
+    var rankLabel = getRankLabel(p);
+    var endTxt = getAddressText(p);
+
+    return `
+      <strong>${nome || ''}</strong><br>
+      Rank: ${rankLabel}<br>
+      Telefone: ${tel || '-'}<br>
+      Setor: ${setor || '-'}<br>
+      Status: ${status || '-'}<br>
+      Endereço: ${endTxt ? endTxt : '-'}
+    `;
+  }
+
+  function rankOptionsHtml(selectedId){
+    selectedId = String(selectedId || '');
+    // mesma ordem que você usa no filtro (em-analise -> latao -> bronze -> prata -> ouro)
+    var order = ['em-analise','latao','bronze','prata','ouro'];
+    function findBySlug(sl){
+      return rankTerms.find(function(t){
+        var s = norm(t.slug);
+        if (sl === 'latao') return (s === 'latao' || s === 'latão');
+        if (sl === 'em-analise') return (s === 'em-analise' || s === 'em_analise');
+        return s === sl;
+      });
+    }
+
+    var html = '';
+    order.forEach(function(sl){
+      var t = findBySlug(sl);
+      if (!t) return;
+      var label = (sl === 'em-analise') ? 'Em análise' : (t.name || sl);
+      var sel = (String(t.id) === selectedId) ? 'selected' : '';
+      html += `<option value="${t.id}" ${sel}>${label}</option>`;
+    });
+
+    // fallback caso não bata na ordem
+    if (!html && rankTerms.length){
+      rankTerms.forEach(function(t){
+        var sel2 = (String(t.id) === selectedId) ? 'selected' : '';
+        html += `<option value="${t.id}" ${sel2}>${t.name || t.slug}</option>`;
+      });
+    }
+    return html;
+  }
+
+  async function renderDetails(p){
+    current = p;
+
+    if (!p){
+      leftMsg.textContent = 'Clique em um ponto';
+      leftBody.innerHTML = '<div class="helper">Clique em um ponto no mapa para ver todas as informações aqui.</div>';
+      return;
+    }
+
+    var nome = getName(p);
+    var tel = getPhone(p);
+    var setor = getSetor(p);
+    var status = getStatus(p);
+
+    var rslug = getRankSlug(p);
+    var rankLabel = getRankLabel(p);
+    var rankPillCls = rankPillClassFromSlug(rslug);
+
+    var inactive = (statusSlug(p) === 'inativo');
+    var accent = inactive ? cssVar('--inactive') : rankColorFromSlug(rslug);
+
+    var photo = await resolvePhotoUrl(p);
+
+    var ll = getLatLng(p);
+    var endTxt = getAddressText(p);
+    var rankId = getRankId(p);
+
+    leftMsg.textContent = 'ID: ' + (p.id || '-');
+
+    leftBody.innerHTML = `
+      <div class="profile">
+        <div class="avatar" style="border-color:${accent}">
+          ${photo ? `<img src="${photo}" alt="Foto">` : ''}
+        </div>
+        <div>
+          <p class="pname">${nome || '(sem nome)'}</p>
+          <p class="pmeta">
+            ${pillStatus(status)}
+            <span style="margin-left:8px" class="pill ${rankPillCls}">${rankLabel}</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="btns">
+        <button class="btn" id="btnEditMode" type="button">${editMode ? 'Sair da edição' : 'Editar localização (arrastar ponto)'}</button>
+        <button class="btn btnPrimary" id="btnSaveLoc" type="button" ${editMode ? '' : 'disabled'}>Salvar localização do arrasto</button>
+      </div>
+
+      <div class="gridInfo">
+        <div class="kv">
+          <span class="k">Telefone</span>
+          <span class="v">${tel || '-'}</span>
+        </div>
+
+        <div class="kv">
+          <span class="k">Setor</span>
+          <div class="row" style="margin:0;">
+            <select id="mSetorMap">
+              <option value="financeiro">Financeiro</option>
+              <option value="comercial">Comercial</option>
+              <option value="operacional">Operacional</option>
+              <option value="rh">RH</option>
+              <option value="administrativo">Administrativo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="kv">
+          <span class="k">Status</span>
+          <div class="row" style="margin:0;">
+            <select id="mStatusMap">
+              <option value="ativo">Ativo</option>
+              <option value="inativo">Inativo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="kv">
+          <span class="k">Rank</span>
+          <div class="row" style="margin:0;">
+            <select id="mRankMap">
+              ${rankOptionsHtml(rankId)}
+            </select>
+          </div>
+        </div>
+
+        <div class="kv full">
+          <div class="btns" style="margin-top:0;">
+            <button class="btn btnPrimary" id="btnSaveBasics" type="button">Salvar dados (status/setor/rank)</button>
+          </div>
+          <div class="note" id="basicsNote"></div>
+        </div>
+
+        <div class="kv full">
+          <span class="k">Endereço (texto digitado)</span>
+          <div class="row" style="margin:0;">
+            <textarea id="addrText" placeholder="Digite o endereço...">${endTxt ? endTxt : ''}</textarea>
+          </div>
+          <div class="btns" style="margin-top:8px;">
+            <button class="btn btnPrimary" id="btnSaveAddr" type="button">Salvar endereço e mover ponto</button>
+          </div>
+          <div class="note" id="addrNote"></div>
+        </div>
+
+        <div class="kv full">
+          <span class="k">Endereço (calculado pelo ponto)</span>
+          <span class="v" id="dAddr">${ll ? 'Buscando endereço…' : 'Sem coordenadas válidas.'}</span>
+        </div>
+      </div>
+
+      <div class="note" id="saveNote"></div>
+    `;
+
+    // set selects com valores atuais
+    var selSetor = document.getElementById('mSetorMap');
+    var selStatus = document.getElementById('mStatusMap');
+    var selRank = document.getElementById('mRankMap');
+    if (selSetor) selSetor.value = setor || 'administrativo';
+    if (selStatus) selStatus.value = status || 'ativo';
+    if (selRank) selRank.value = String(rankId || selRank.value || '');
+
+    document.getElementById('btnEditMode').addEventListener('click', function(){
+      toggleEditMode();
+    });
+    document.getElementById('btnSaveLoc').addEventListener('click', function(){
+      saveLocationFromMarker(); // arrasto -> endereço calculado vira texto
+    });
+    document.getElementById('btnSaveAddr').addEventListener('click', function(){
+      saveAddressFromText(); // texto -> geocode -> move -> salva
+    });
+    document.getElementById('btnSaveBasics').addEventListener('click', function(){
+      saveBasicsFromLeftPanel();
+    });
+
+    // reverse (se tiver coords)
+    if (ll){
+      var dAddr = document.getElementById('dAddr');
+      var addr = await reverseGeocode(ll.lat, ll.lng);
+      if (dAddr) dAddr.textContent = addr || 'Não foi possível obter o endereço.';
+    }
+  }
+
+  function clearMarkers(){
+    markersLayer.clearLayers();
+    markerByPersonId = {};
+  }
+
+  function applyFiltersAndRender(){
+    clearMarkers();
+
+    var query = norm(q.value);
+    var rankFilter = fRank.value;
+    var setorFilter = norm(fSetor.value);
+    var statusFilter = norm(fStatus.value);
+
+    var shown = peopleAll.filter(function(p){
+      var nome = norm(getName(p));
+      var tel = norm(getPhone(p));
+      var setor = norm(getSetor(p));
+      var st = norm(getStatus(p));
+
+      var rid = String(getRankId(p) || '');
+
+      if (query){
+        var hay = (nome + ' ' + tel);
+        if (hay.indexOf(query) === -1) return false;
+      }
+      if (rankFilter && rid !== String(rankFilter)) return false;
+      if (setorFilter && setor !== setorFilter) return false;
+      if (statusFilter && st !== statusFilter) return false;
+
+      return true;
+    });
+
+    var validos = 0;
+
+    shown.forEach(function(p){
+      var ll = getLatLng(p);
+      if (!ll) return;
+      validos++;
+
+      var mk = L.marker([ll.lat, ll.lng], {
+        icon: markerIcon(p),
+        draggable: !!editMode && current && current.id === p.id
+      })
+      .addTo(markersLayer)
+      .bindPopup(popupHtml(p));
+
+      markerByPersonId[String(p.id)] = mk;
+
+      mk.on('click', function(){
+        map.setView([ll.lat, ll.lng], Math.max(map.getZoom(), 12));
+        renderDetails(p);
+      });
+
+      mk.on('dragend', function(){
+        if (!editMode) return;
+        if (!current || String(current.id) !== String(p.id)) return;
+
+        var pos = mk.getLatLng();
+        var dAddr = document.getElementById('dAddr');
+        if (dAddr) dAddr.textContent = 'Buscando endereço…';
+
+        reverseGeocode(pos.lat, pos.lng).then(function(addr){
+          var calc = addr || '';
+          if (dAddr) dAddr.textContent = calc || 'Não foi possível obter o endereço.';
+
+          // marca que esse usuário foi arrastado e guarda o endereço calculado
+          draggedPosById[String(p.id)] = { lat: pos.lat, lng: pos.lng, calcAddr: calc };
+        });
+      });
+    });
+
+    mapMsg.textContent = shown.length + ' pessoa(s) filtradas — ' + validos + ' ponto(s) no mapa';
+  }
+
+  function toggleEditMode(){
+    editMode = !editMode;
+    applyFiltersAndRender();
+    if (current) renderDetails(current);
+  }
+
+  // ✅ SALVAR DO ARRASTO:
+  // regra: ao salvar arrasto, o endereço calculado vira endereco_texto (somente nesse caso).
+  async function saveLocationFromMarker(){
+    var note = document.getElementById('saveNote');
+    if (!note) return;
+
+    if (!current){
+      note.innerHTML = '<span class="err">Selecione uma pessoa no mapa.</span>';
+      return;
+    }
+    if (!NONCE){
+      note.innerHTML = '<span class="err">Sem rest_cfg (nonce). Não dá pra salvar.</span>';
+      return;
+    }
+
+    var id = String(current.id);
+    var mk = markerByPersonId[id];
+    if (!mk){
+      note.innerHTML = '<span class="err">Marcador não encontrado.</span>';
+      return;
+    }
+
+    var pos = mk.getLatLng();
+    note.textContent = 'Salvando localização…';
+
+    try{
+      // pega o reverse (mesmo se não tiver no cache)
+      var calcAddr = await reverseGeocode(pos.lat, pos.lng);
+
+      // se teve arrasto, aí sim: calculado vira texto
+      // (e só faz isso no fluxo do arrasto)
+      var enderecoTextoNovo = (calcAddr || '').trim();
+
+      // se por algum motivo reverse falhar, salva só coords
+      if (enderecoTextoNovo){
+        // atualiza UI agora (textarea) antes de salvar
+        var ta = document.getElementById('addrText');
+        if (ta) ta.value = enderecoTextoNovo;
+
+        // salva coords + endereco_texto
+        await saveAddressAndCoords(current, enderecoTextoNovo, pos.lat, pos.lng);
+      } else {
+        // fallback: salva só coords, mas sem quebrar required (manda acf required)
+        var acfPayload = buildAcfRequired(current, {
+          latitude: String(pos.lat),
+          longitude: String(pos.lng)
+        });
+
+        var payload = {
+          acf: acfPayload,
+          meta: { latitude: String(pos.lat), longitude: String(pos.lng) }
+        };
+
+        var r = await fetch(REST + 'wp/v2/pessoas/' + current.id, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-WP-Nonce': NONCE
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if(!r.ok){
+          console.log('Erro salvar loc:', await r.text());
+          note.innerHTML = '<span class="err">Erro ao salvar. Veja o console.</span>';
+          return;
+        }
+
+        current.meta = current.meta || {};
+        current.acf = current.acf || {};
+        current.meta.latitude = String(pos.lat);
+        current.meta.longitude = String(pos.lng);
+        current.acf.latitude = String(pos.lat);
+        current.acf.longitude = String(pos.lng);
+      }
+
+      // atualiza popup
+      mk.setPopupContent(popupHtml(current));
+
+      // limpa flag do arrasto
+      delete draggedPosById[id];
+
+      note.textContent = 'Localização salva! (endereço calculado virou texto)';
+      editMode = false;
+
+      applyFiltersAndRender();
+      renderDetails(current);
+
+    }catch(e){
+      console.log(e);
+      note.innerHTML = '<span class="err">' + (e && e.message ? e.message : 'Erro inesperado ao salvar.') + '</span>';
+    }
+  }
+
+  // ✅ TEXTO -> GEOCODE -> MOVE -> SALVA (não mexe na regra do arrasto)
+  async function saveAddressFromText(){
+    var note = document.getElementById('addrNote');
+    var ta = document.getElementById('addrText');
+    if (!note || !ta) return;
+
+    if (!current){
+      note.innerHTML = '<span class="err">Selecione uma pessoa no mapa.</span>';
+      return;
+    }
+    if (!NONCE){
+      note.innerHTML = '<span class="err">Sem rest_cfg (nonce). Não dá pra salvar.</span>';
+      return;
+    }
+
+    var text = ta.value.trim();
+    if (!text){
+      note.innerHTML = '<span class="err">Digite um endereço.</span>';
+      return;
+    }
+
+    note.textContent = 'Buscando coordenadas do endereço…';
+
+    var ll = await geocodeAddress(text);
+    if (!ll){
+      note.innerHTML = '<span class="err">Não encontrei esse endereço. Tente escrever mais completo.</span>';
+      return;
+    }
+
+    var mk = markerByPersonId[String(current.id)];
+    if (!mk){
+      note.innerHTML = '<span class="err">Marcador não encontrado.</span>';
+      return;
+    }
+
+    mk.setLatLng([ll.lat, ll.lng]);
+    map.setView([ll.lat, ll.lng], Math.max(map.getZoom(), 14));
+
+    note.textContent = 'Salvando endereço e coordenadas…';
+
+    try{
+      await saveAddressAndCoords(current, text, ll.lat, ll.lng);
+
+      mk.setPopupContent(popupHtml(current));
+
+      var dAddr = document.getElementById('dAddr');
+      if (dAddr) dAddr.textContent = 'Buscando endereço…';
+      var calc = await reverseGeocode(ll.lat, ll.lng);
+      if (dAddr) dAddr.textContent = calc || 'Não foi possível obter o endereço.';
+
+      // se veio por texto, não é "arrasto" => não mexe na regra
+      delete draggedPosById[String(current.id)];
+
+      editMode = false;
+      applyFiltersAndRender();
+      renderDetails(current);
+
+      note.textContent = 'Atualizado! Ponto movido e salvo.';
+
+    }catch(e){
+      console.log(e);
+      note.innerHTML = '<span class="err">' + (e && e.message ? e.message : 'Erro ao salvar.') + '</span>';
+    }
+  }
+
+  // ✅ salvar status/setor/rank pelo painel esquerdo
+  async function saveBasicsFromLeftPanel(){
+    var note = document.getElementById('basicsNote');
+    if (!note) return;
+
+    if (!current){
+      note.innerHTML = '<span class="err">Selecione uma pessoa no mapa.</span>';
+      return;
+    }
+    if (!NONCE){
+      note.innerHTML = '<span class="err">Sem rest_cfg (nonce). Não dá pra salvar.</span>';
+      return;
+    }
+
+    var selSetor = document.getElementById('mSetorMap');
+    var selStatus = document.getElementById('mStatusMap');
+    var selRank = document.getElementById('mRankMap');
+
+    var newSetor = selSetor ? selSetor.value : getSetor(current);
+    var newStatus = selStatus ? selStatus.value : getStatus(current);
+    var newRankId = selRank ? selRank.value : String(getRankId(current));
+
+    note.textContent = 'Salvando…';
+
+    try{
+      await saveBasicsFromMap(current, newStatus, newSetor, newRankId);
+
+      // atualiza marker (cor muda)
+      applyFiltersAndRender();
+      renderDetails(current);
+
+      // atualiza popup do marker atual
+      var mk = markerByPersonId[String(current.id)];
+      if (mk) mk.setPopupContent(popupHtml(current));
+
+      note.textContent = 'Dados salvos!';
+
+    }catch(e){
+      console.log(e);
+      note.innerHTML = '<span class="err">' + (e && e.message ? e.message : 'Erro ao salvar.') + '</span>';
+    }
+  }
+
+  async function loadRanks(){
+    var r = await fetch(REST + 'wp/v2/' + TAX_REST_BASE + '?per_page=100');
+    if(!r.ok){ console.log('Erro ranks:', await r.text()); return; }
+
+    rankTerms = await r.json();
+    termById = {};
+    rankTerms.forEach(function(t){ termById[String(t.id)] = t; });
+
+    var order = ['em-analise','latao','bronze','prata','ouro'];
+    function findBySlug(sl){
+      return rankTerms.find(function(t){
+        var s = norm(t.slug);
+        if (sl === 'latao') return (s === 'latao' || s === 'latão');
+        if (sl === 'em-analise') return (s === 'em-analise' || s === 'em_analise');
+        return s === sl;
+      });
+    }
+
+    fRank.innerHTML = '<option value="">Todos</option>';
+
+    order.forEach(function(sl){
+      var t = findBySlug(sl);
+      if (!t) return;
+      var label = (sl === 'em-analise') ? 'Em análise' : (t.name || sl);
+
+      var opt = document.createElement('option');
+      opt.value = String(t.id);
+      opt.textContent = label;
+      fRank.appendChild(opt);
+    });
+  }
+
+  async function loadPeople(){
+    mapMsg.textContent = 'Carregando pessoas…';
+    try{
+      var url = REST + 'wp/v2/pessoas?per_page=100&_fields=id,title,meta,acf,featured_media,' + TAX_REST_BASE;
+
+      var res = await fetch(url);
+      if(!res.ok){
+        console.log('Erro pessoas:', await res.text());
+        mapMsg.textContent='Erro ao carregar.';
+        return;
+      }
+
+      peopleAll = await res.json();
+
+      applyFiltersAndRender();
+      mapMsg.textContent = 'Pronto! Clique em um ponto pra ver os detalhes.';
+    }catch(e){
+      console.log(e);
+      mapMsg.textContent = 'Erro no fetch (veja console).';
+    }
+  }
+
+  btnApply.addEventListener('click', function(){
+    applyFiltersAndRender();
+  });
+
+  btnReset.addEventListener('click', function(){
+    q.value = ''; fRank.value=''; fSetor.value=''; fStatus.value='';
+    applyFiltersAndRender();
+    map.setView([DEFAULT_VIEW.lat, DEFAULT_VIEW.lng], DEFAULT_VIEW.zoom);
+    renderDetails(null);
+  });
+
+  q.addEventListener('keydown', function(ev){
+    if (ev.key === 'Enter'){ ev.preventDefault(); applyFiltersAndRender(); }
+  });
+
+  (async function(){
+    await loadRanks();
+    await loadPeople();
+    map.invalidateSize();
+  })();
+});
+</script>
